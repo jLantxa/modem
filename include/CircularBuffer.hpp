@@ -5,6 +5,9 @@
  *
 */
 
+#ifndef _MODEM_INCLUDE_CIRCULAR_BUFFER_HPP_
+#define _MODEM_INCLUDE_CIRCULAR_BUFFER_HPP_
+
 #include <cmath>
 
 template <typename T>
@@ -87,3 +90,5 @@ private:
         mFilledSize = std::min(mFilledSize + n, mLength);
     }
 };
+
+#endif // _MODEM_INCLUDE_CIRCULAR_BUFFER_HPP_
