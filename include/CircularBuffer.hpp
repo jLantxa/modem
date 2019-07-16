@@ -98,14 +98,8 @@ private:
     T* mItems;
 
    void initSize(unsigned int n) {
-        const float nlog = log2(n);
-        const unsigned int highestMaskBit = ceil(nlog);
-
-        mLength = 1 << highestMaskBit;
-        mSizeMask = 0;
-        for (int i = 0; i <= highestMaskBit; i++) {
-            mSizeMask += 1 << i;
-        }
+        mLength = 1 << static_cast<unsigned int>(ceil(log2(n)));
+        mSizeMask = mLength-1;
     }
 };
 
