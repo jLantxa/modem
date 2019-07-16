@@ -30,7 +30,7 @@ AlsaAudioSink::AlsaAudioSink(unsigned int sampleRate)
 		Debug::Log::e(LOG_TAG, "Cannot set interleaved mode. %s", snd_strerror(ret));
     }
 
-	if ((ret = snd_pcm_hw_params_set_format(mPCMHandle, mHWParams, SND_PCM_FORMAT_S16_LE)) < 0) {
+	if ((ret = snd_pcm_hw_params_set_format(mPCMHandle, mHWParams, SND_PCM_FORMAT_FLOAT)) < 0) {
 		Debug::Log::e(LOG_TAG, "Cannot set format. %s", snd_strerror(ret));
     }
 
@@ -59,6 +59,16 @@ AlsaAudioSink::~AlsaAudioSink() {
 	snd_pcm_close(mPCMHandle);
 }
 
-void AlsaAudioSink::send(AudioRingBuffer& buffer) {
+void AlsaAudioSink::send(AudioRingBuffer& ringBuffer) {
+	unsigned int size = ringBuffer.size();
+	if (size == 0) {	// Nothing to write
+		return;
+	}
 
+	float* buffer = new float[size];
+	ringBuffer.pop(buffer, size);
+
+	// TODO: PCM write
+
+	delete[] buffer;
 }

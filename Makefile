@@ -16,12 +16,19 @@ clean:
 
 tests:
 	make CircularBufferTest
+	make OscillatorTest
 	make AlsaAudioSinkTest
 
 CircularBufferTest:
 	$(CC) $(CFLAGS) -I $(INCLUDE)/ \
 		$(TEST)/CircularBufferTest.cpp \
 	-o $(OUT)/CircularBufferTest
+
+OscillatorTest:
+	$(CC) $(CFLAGS) -I $(INCLUDE)/ \
+		$(SRC)/Oscillator.cpp \
+		$(TEST)/OscillatorTest.cpp \
+	-o $(OUT)/OscillatorTest
 
 AlsaAudioSinkTest:
 	$(CC) $(CFLAGS) $(ALSA_LFLAGS) -I $(INCLUDE)/ \
