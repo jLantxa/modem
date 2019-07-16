@@ -22,17 +22,17 @@
 #include <algorithm>
 #include <cmath>
 
-#define NCO_MAX_TABLE_BITS 8
-
 NCO::NCO(const float freq, const float sampleRate, const unsigned int tableBits)
 :   mFrequency(freq),
     mSampleRate(sampleRate),
     mPhase(0),
     mDeltaPhase(0)
 {
-    mTableBits = std::min<unsigned int>(NCO_MAX_TABLE_BITS, tableBits);
-    mTableLength = 1 << tableBits;
+    mTableBits = std::min<unsigned int>(MAX_TABLE_BITS, tableBits);
+    mTableLength = 1 << mTableBits;
     mMask = mTableLength - 1;
+
+    updatePhaseDelta();
 
     // Fill lookup table
     mTable = new float[mTableLength];

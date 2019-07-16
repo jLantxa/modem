@@ -20,14 +20,12 @@
 #ifndef _MODEM_INCLUDE_NCO_HPP_
 #define _MODEM_INCLUDE_NCO_HPP_
 
-#define NCO_DEFAULT_TABLE_BITS 8
-
 #include <cmath>
 
 class NCO final {
 public:
     NCO(const float freq, const float sampleRate,
-        const unsigned int tableBits = NCO_DEFAULT_TABLE_BITS);
+        const unsigned int tableBits = DEFAULT_TABLE_BITS);
     ~NCO();
 
     float operator()(void);
@@ -37,6 +35,9 @@ public:
 
     float sampleRate() const;
     void setSampleRate(const float sampleRate);
+
+    const static unsigned int DEFAULT_TABLE_BITS = 10;
+    const static unsigned int MAX_TABLE_BITS = 16;
 
 private:
     float* mTable;
@@ -52,7 +53,7 @@ private:
 
     void updatePhaseDelta();
 
-    const float ROTATION = pow(2, 8*sizeof(mPhase));
+    const float ROTATION = pow(2, 8*sizeof(unsigned int));
 };
 
 #endif // _MODEM_INCLUDE_NCO_HPP_

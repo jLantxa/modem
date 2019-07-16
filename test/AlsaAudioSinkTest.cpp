@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
 
     IAudioSink* audioSink = new AlsaAudioSink(sample_rate);
 
-    NCO oscillator(freq, sample_rate, 12 /* Table index bits */);
+    NCO oscillator(freq, sample_rate, 10/*bits for table index*/);
 
     const unsigned int max_sample = sample_rate * PULSE_TIME_SECONDS;
     unsigned int n = 0;
