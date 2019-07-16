@@ -17,26 +17,18 @@
  *
 */
 
-#ifndef _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_
-#define _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_
+#ifndef _MODEM_INCLUDE_SIGNAL_HPP_
+#define _MODEM_INCLUDE_SIGNAL_HPP_
 
-#include <alsa/asoundlib.h>
+#include "CircularBuffer.hpp"
 
-#include "AudioInterface.hpp"
+#include <complex>
 
-class AlsaAudioSink : public IAudioSink {
-public:
-    AlsaAudioSink(unsigned int sampleRate);
-    virtual ~AlsaAudioSink();
+using Sample = float;
+using AudioRingBuffer = CircularBuffer<Sample>;
 
-    virtual unsigned int send(float* buffer, unsigned int size);
+// Complex numbers
+using ComplexSymbol = std::complex<Sample>;
+const ComplexSymbol j(0, 1);
 
-    unsigned int sampleRate();
-
-private:
-    snd_pcm_t* mPCMHandle;
-
-    unsigned int mSampleRate;
-};
-
-#endif // _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_
+#endif // _MODEM_INCLUDE_SIGNAL_HPP_

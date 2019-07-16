@@ -20,7 +20,8 @@ count-lines:
 # TESTS #
 tests: \
 	CircularBufferTest \
-	AlsaAudioSinkTest
+	AlsaAudioSinkTest \
+	FourierTest
 
 CircularBufferTest:
 	$(CC) $(CFLAGS) -DDEBUG_LEVEL=6 -I $(INCLUDE)/ \
@@ -33,3 +34,9 @@ AlsaAudioSinkTest:
 		$(SRC)/AlsaAudioSink.cpp \
 		$(TEST)/AlsaAudioSinkTest.cpp \
 	-o $(OUT)/AlsaAudioSinkTest
+
+FourierTest:
+	$(CC) $(CFLAGS) -DDEBUG_LEVEL=6 -I $(INCLUDE)/ \
+		$(SRC)/fourier.cpp \
+		$(TEST)/FourierTest.cpp \
+	-o $(OUT)/FourierTest

@@ -17,11 +17,29 @@
  *
 */
 
-#ifndef _MODEM_INCLUDE_AUDIO_HPP_
-#define _MODEM_INCLUDE_AUDIO_HPP_
+#include "fourier.hpp"
 
-#include "CircularBuffer.hpp"
+#include <cmath>
+#include "signal.hpp"
 
-using AudioRingBuffer = CircularBuffer<float>;
+void dct(unsigned int size, ComplexSymbol* src, ComplexSymbol* dst) {
+    for (unsigned int k = 0; k < size; k++) {
+        ComplexSymbol acc(0);
+        for (unsigned int n = 0; n < size; n++) {
+            float phase = 2*M_PI*k*n/size;
+            acc += src[n] * std::exp(-j*phase);
+        }
+        dst[k] = acc;
+    }
+}
 
-#endif // _MODEM_INCLUDE_AUDIO_HPP_
+void idct(unsigned int size, ComplexSymbol* src, ComplexSymbol* dst) {
+    for (unsigned int n = 0; n < size; n++) {
+        ComplexSymbol acc(0);
+        for (unsigned int k = 0; k < size; k++) {
+            float phase = 2*M_PI*k*n/size;
+            acc += src[k] * std::exp(j*phase);
+        }
+        dst[n] = (1.0f/size) * acc;
+    }
+}

@@ -17,26 +17,12 @@
  *
 */
 
-#ifndef _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_
-#define _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_
+#ifndef _MODEM_INCLUDE_FOURIER_HPP_
+#define _MODEM_INCLUDE_FOURIER_HPP_
 
-#include <alsa/asoundlib.h>
+#include "signal.hpp"
 
-#include "AudioInterface.hpp"
+void dct(unsigned int size, ComplexSymbol* src, ComplexSymbol* dst);
+void idct(unsigned int size, ComplexSymbol* src, ComplexSymbol* dst);
 
-class AlsaAudioSink : public IAudioSink {
-public:
-    AlsaAudioSink(unsigned int sampleRate);
-    virtual ~AlsaAudioSink();
-
-    virtual unsigned int send(float* buffer, unsigned int size);
-
-    unsigned int sampleRate();
-
-private:
-    snd_pcm_t* mPCMHandle;
-
-    unsigned int mSampleRate;
-};
-
-#endif // _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_
+#endif // _MODEM_INCLUDE_FOURIER_HPP_

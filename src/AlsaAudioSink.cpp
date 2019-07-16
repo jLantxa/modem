@@ -19,7 +19,6 @@
 
 #include "debug.hpp"
 
-#include "audio.hpp"
 #include "AlsaAudioSink.hpp"
 
 #define PCM_DEVICE "default"
