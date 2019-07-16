@@ -17,7 +17,8 @@ Oscillator::Oscillator(unsigned int freq, unsigned int sampleRate)
 
     mSamples = new float[mLength];
     for (unsigned int n = 0; n < mLength; n++) {
-        mSamples[n] = sin(n * (2*M_PI)*(mFreq/mSampleRate));
+        float t = 1.0f * n / mSampleRate;
+        mSamples[n] = sin(2.0f * M_PI * freq * t);
     }
 }
 

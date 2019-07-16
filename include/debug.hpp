@@ -33,12 +33,13 @@ namespace Debug
 
 #ifdef NDEBUG
     static int defined_level = NONE;
-#endif
-
-#ifdef DEBUG_LEVEL
-    static int defined_level = DEBUG_LEVEL;
 #else
-    static int defined_level = DEFAULT_LEVEL;
+    #ifdef DEBUG_LEVEL
+        static int defined_level = DEBUG_LEVEL;
+    #else
+        static int defined_level = DEFAULT_LEVEL;
+    #endif
+
 #endif
 
     template <typename... Args>

@@ -13,7 +13,7 @@
 class IAudioSink {
 public:
     virtual ~IAudioSink() = default;
-    virtual void send(AudioRingBuffer& buffer) = 0;
+    virtual unsigned int send(float* buffer, unsigned int size) = 0;
 };
 
 #endif // _MODEM_INCLUDE_AUDIO_INTERFACE_HPP_

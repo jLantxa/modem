@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
 
     const unsigned int pop_length = 48;
     for (unsigned int i = 0; i < pop_length; i++) {
-        int item = buffer.pop();
+        int item = buffer.consume();
         assert(item == i);
     }
     assert(buffer.size() == (push_length - pop_length));

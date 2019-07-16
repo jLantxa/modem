@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=-std=c++17
+CFLAGS=-std=c++17 -Werror -O3
 
 INCLUDE=include
 SRC=src
@@ -14,24 +14,29 @@ init:
 clean:
 	@rm -rf $(OUT)/*
 
-tests:
-	make CircularBufferTest
-	make OscillatorTest
-	make AlsaAudioSinkTest
+count-lines:
+	cloc $(SRC)/ $(INCLUDE)/ $(TEST)/
+
+# TESTS #
+tests: \
+	CircularBufferTest \
+	OscillatorTest \
+	AlsaAudioSinkTest
 
 CircularBufferTest:
-	$(CC) $(CFLAGS) -I $(INCLUDE)/ \
+	$(CC) $(CFLAGS) -DDEBUG_LEVEL=6 -I $(INCLUDE)/ \
 		$(TEST)/CircularBufferTest.cpp \
 	-o $(OUT)/CircularBufferTest
 
 OscillatorTest:
-	$(CC) $(CFLAGS) -I $(INCLUDE)/ \
+	$(CC) $(CFLAGS) -DDEBUG_LEVEL=6 -I $(INCLUDE)/ \
 		$(SRC)/Oscillator.cpp \
 		$(TEST)/OscillatorTest.cpp \
 	-o $(OUT)/OscillatorTest
 
 AlsaAudioSinkTest:
-	$(CC) $(CFLAGS) $(ALSA_LFLAGS) -I $(INCLUDE)/ \
+	$(CC) $(CFLAGS) $(ALSA_LFLAGS) -DDEBUG_LEVEL=6 -I $(INCLUDE)/ \
+		$(SRC)/Oscillator.cpp \
 		$(SRC)/AlsaAudioSink.cpp \
 		$(TEST)/AlsaAudioSinkTest.cpp \
 	-o $(OUT)/AlsaAudioSinkTest

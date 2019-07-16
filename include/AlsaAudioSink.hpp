@@ -18,11 +18,12 @@ public:
     AlsaAudioSink(unsigned int sampleRate);
     virtual ~AlsaAudioSink();
 
-    virtual void send(AudioRingBuffer& buffer);
+    virtual unsigned int send(float* buffer, unsigned int size);
+
+    unsigned int sampleRate();
 
 private:
-    snd_pcm_t *mPCMHandle;
-    snd_pcm_hw_params_t *mHWParams;
+    snd_pcm_t* mPCMHandle;
 
     unsigned int mSampleRate;
 };
