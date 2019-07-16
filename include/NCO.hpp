@@ -17,25 +17,42 @@
  *
 */
 
-#ifndef _MODEM_INCLUDE_OSCILLATOR_HPP_
-#define _MODEM_INCLUDE_OSCILLATOR_HPP_
+#ifndef _MODEM_INCLUDE_NCO_HPP_
+#define _MODEM_INCLUDE_NCO_HPP_
 
-class Oscillator {
+#define NCO_DEFAULT_TABLE_BITS 8
+
+#include <cmath>
+
+class NCO final {
 public:
-    Oscillator(unsigned int freq, unsigned int sampleRate);
-    ~Oscillator();
+    NCO(const float freq, const float sampleRate,
+        const unsigned int tableBits = NCO_DEFAULT_TABLE_BITS);
+    ~NCO();
 
-    float operator[](unsigned int n);
-    float atPhase(float phy);
+    float operator()(void);
 
-    unsigned int length();
+    float frequency() const;
+    void setFrequency(const float frequency);
+
+    float sampleRate() const;
+    void setSampleRate(const float sampleRate);
 
 private:
-    unsigned int mFreq;
-    unsigned int mSampleRate;
-    unsigned int mLength;
+    float* mTable;
 
-    float* mSamples;
+    unsigned int mTableBits;
+    unsigned int mTableLength;
+    unsigned int mMask;
+    unsigned int mPhase;
+    unsigned int mDeltaPhase;
+
+    float mFrequency;
+    float mSampleRate;
+
+    void updatePhaseDelta();
+
+    const float ROTATION = pow(2, 8*sizeof(mPhase));
 };
 
-#endif // _MODEM_INCLUDE_OSCILLATOR_HPP_
+#endif // _MODEM_INCLUDE_NCO_HPP_

@@ -22,9 +22,7 @@
 #include "debug.hpp"
 
 #include "AlsaAudioSink.hpp"
-#include "Oscillator.hpp"
-
-#include "CircularBuffer.hpp"
+#include "NCO.hpp"
 
 const static char* LOG_TAG = "AlsaAudioSinkTest";
 
@@ -43,14 +41,14 @@ int main(int argc, char const *argv[])
 
     IAudioSink* audioSink = new AlsaAudioSink(sample_rate);
 
-    Oscillator osc(freq, sample_rate);
+    NCO oscillator(freq, sample_rate, 12 /* Table index bits */);
 
     const unsigned int max_sample = sample_rate * PULSE_TIME_SECONDS;
     unsigned int n = 0;
     float buffer[FRAME_SIZE];
     while (n < max_sample) {
         for (unsigned int i = 0; i < FRAME_SIZE; i++) {
-            buffer[i] = osc[n+i];
+            buffer[i] = oscillator();
         }
         audioSink->send(buffer, FRAME_SIZE);
         n += FRAME_SIZE;

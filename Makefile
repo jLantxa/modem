@@ -20,7 +20,6 @@ count-lines:
 # TESTS #
 tests: \
 	CircularBufferTest \
-	OscillatorTest \
 	AlsaAudioSinkTest
 
 CircularBufferTest:
@@ -28,15 +27,9 @@ CircularBufferTest:
 		$(TEST)/CircularBufferTest.cpp \
 	-o $(OUT)/CircularBufferTest
 
-OscillatorTest:
-	$(CC) $(CFLAGS) -DDEBUG_LEVEL=6 -I $(INCLUDE)/ \
-		$(SRC)/Oscillator.cpp \
-		$(TEST)/OscillatorTest.cpp \
-	-o $(OUT)/OscillatorTest
-
 AlsaAudioSinkTest:
 	$(CC) $(CFLAGS) $(ALSA_LFLAGS) -DDEBUG_LEVEL=6 -I $(INCLUDE)/ \
-		$(SRC)/Oscillator.cpp \
+		$(SRC)/NCO.cpp \
 		$(SRC)/AlsaAudioSink.cpp \
 		$(TEST)/AlsaAudioSinkTest.cpp \
 	-o $(OUT)/AlsaAudioSinkTest
