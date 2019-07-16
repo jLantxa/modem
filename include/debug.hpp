@@ -43,7 +43,7 @@ namespace Debug
 
     const static int DEFAULT_LEVEL = INFO;
 
-#ifdef NDEBUG
+#if defined(NDEBUG) && NDEBUG !=0
     static int defined_level = NONE;
 #else
     #ifdef DEBUG_LEVEL
