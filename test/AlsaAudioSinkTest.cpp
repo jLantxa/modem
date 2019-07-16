@@ -24,34 +24,38 @@
 #include "AlsaAudioSink.hpp"
 #include "NCO.hpp"
 
-const static char* LOG_TAG = "AlsaAudioSinkTest";
+#include <algorithm>
 
-#define PULSE_TIME_SECONDS 3
-#define FRAME_SIZE 1024
+const static char* LOG_TAG = "AlsaAudioSinkTest";
 
 int main(int argc, char const *argv[])
 {
-    if (argc != 3) {
-        Debug::Log::e(LOG_TAG, "./AlsaAudioSinkTest <freq> <sample_rate>");
+    if (argc != 5) {
+        Debug::Log::e(LOG_TAG, "./AlsaAudioSinkTest <freq0> sample_rate> <time> <notes>");
         return -1;
     }
 
-    const unsigned int freq = atoi(argv[1]);
+    unsigned int freq = atoi(argv[1]);
     const unsigned int sample_rate = atoi(argv[2]);
+    const float time = atof(argv[3]);
+    const unsigned int notes = std::max(1, atoi(argv[4]));
 
     IAudioSink* audioSink = new AlsaAudioSink(sample_rate);
 
-    NCO oscillator(freq, sample_rate, 10/*bits for table index*/);
+    NCO oscillator(freq, sample_rate, 16/*bits for table index*/);
 
-    const unsigned int max_sample = sample_rate * PULSE_TIME_SECONDS;
+    const unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
+    const unsigned int frame_size = static_cast<unsigned int>(total_samples/(float)notes);
     unsigned int n = 0;
-    float buffer[FRAME_SIZE];
-    while (n < max_sample) {
-        for (unsigned int i = 0; i < FRAME_SIZE; i++) {
+    float buffer[frame_size];
+    while (n < total_samples) {
+        for (unsigned int i = 0; i < frame_size; i++) {
             buffer[i] = oscillator();
         }
-        audioSink->send(buffer, FRAME_SIZE);
-        n += FRAME_SIZE;
+        audioSink->send(buffer, frame_size);
+        freq = std::min<float>(freq*pow(2, 1/12.0f), sample_rate/2.0f);
+        oscillator.setFrequency(freq);
+        n += frame_size;
     }
 
     Debug::Log::i(LOG_TAG, "TEST END");
