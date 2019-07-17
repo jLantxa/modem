@@ -42,8 +42,8 @@ int main(int argc, char const *argv[])
 
     IAudioSink* audioSink = new AlsaAudioSink(sample_rate);
 
-    SineLUT sineTable;
-    NCO oscillator(freq, sample_rate, &sineTable);
+    TrigonometryLUT trigTable;
+    SineOscillator oscillator(freq, sample_rate, &trigTable);
 
     const unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
     const unsigned int frame_size = static_cast<unsigned int>(total_samples/(float)notes);

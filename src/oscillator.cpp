@@ -16,54 +16,75 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
 */
+#include <cstdio>
 
 #include "oscillator.hpp"
 
 #include <algorithm>
 #include <cmath>
 
-SineLUT::SineLUT(unsigned int bits) {
+TrigonometryLUT::TrigonometryLUT(unsigned int bits) {
     bit_depth = std::min<unsigned int>(MAX_TABLE_BITS, bit_depth);
     length = 1 << bit_depth;
     mask = length - 1;
 
     table = new float[length];
     for (unsigned int k = 0; k < length; k++) {
-        table[k] = sin(2*M_PI * k/(double)length);
+        /* Careful here:
+         * This struct defines a method called sin. Must use std::sin to avoid
+         * conflicts.
+         */
+        table[k] = std::sin(2*M_PI * k/(double)length);
     }
 }
 
-SineLUT::~SineLUT() {
+TrigonometryLUT::~TrigonometryLUT() {
     delete[] table;
 }
 
-float SineLUT::operator[](unsigned int i) {
+
+float TrigonometryLUT::operator[](unsigned int i) {
     return table[i & mask];
 }
 
+float TrigonometryLUT::sin(unsigned int i) {
+    return table[i & mask];
+}
 
-NCO::NCO(const float freq, const float sampleRate, struct SineLUT* table)
+float TrigonometryLUT::cos(unsigned int i) {
+    return table[(i+(length>>2)) & mask];
+}
+
+float TrigonometryLUT::tan(unsigned int i) {
+    return table[i & mask] / table[(i+(length>>2)) & mask];
+}
+
+NCO::NCO(const float freq, const float sampleRate, struct TrigonometryLUT* table)
 :   mTable(table),
     mFrequency(freq),
     mSampleRate(sampleRate),
     mPhase(0),
     mDeltaPhase(0)
 {
-    updatePhaseDelta();
+    resetPhaseDelta();
 }
 
 NCO::~NCO() {
 
 }
 
-void NCO::updatePhaseDelta() {
-    mDeltaPhase = (unsigned int)(mFrequency * SineLUT::ROTATION / mSampleRate);
+void NCO::resetPhaseDelta() {
+    mDeltaPhase = (unsigned int)(mFrequency * TrigonometryLUT::ROTATION / mSampleRate);
 }
 
 float NCO::operator()(void) {
     mPhase += mDeltaPhase;
     const unsigned int index = mPhase >> (sizeof(unsigned)*8 - mTable->bit_depth);
-    return (*mTable)[index];
+    return lookUpTable(index);
+}
+
+float NCO::lookUpTable(unsigned int i) {
+    return (*mTable)[i];
 }
 
 float NCO::frequency() const {
@@ -72,7 +93,7 @@ float NCO::frequency() const {
 
 void NCO::setFrequency(const float frequency) {
     mFrequency = frequency;
-    updatePhaseDelta();
+    resetPhaseDelta();
 }
 
 float NCO::sampleRate() const {
@@ -81,5 +102,20 @@ float NCO::sampleRate() const {
 
 void NCO::setSampleRate(const float sampleRate) {
     mSampleRate = sampleRate;
-    updatePhaseDelta();
+    resetPhaseDelta();
+}
+
+
+SineOscillator::SineOscillator(const float freq, const float sampleRate, struct TrigonometryLUT* table)
+: NCO(freq, sampleRate, table) { }
+
+float SineOscillator::lookUpTable(unsigned int i) {
+    return mTable->sin(i);
+}
+
+CosineOscillator::CosineOscillator(const float freq, const float sampleRate, struct TrigonometryLUT* table)
+: NCO(freq, sampleRate, table) { }
+
+float CosineOscillator::lookUpTable(unsigned int i) {
+    return mTable->cos(i);
 }

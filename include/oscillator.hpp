@@ -22,7 +22,7 @@
 
 #include <cmath>
 
-struct SineLUT {
+struct TrigonometryLUT {
     unsigned int bit_depth;
     unsigned int length;
     unsigned int mask;
@@ -32,18 +32,22 @@ struct SineLUT {
     const static unsigned int MAX_TABLE_BITS = 16;
     constexpr static float ROTATION = 2.0f * (1u << (8*sizeof(unsigned int) -1));
 
-    SineLUT(unsigned int bits = DEFAULT_TABLE_BITS);
-    ~SineLUT();
+    TrigonometryLUT(unsigned int bits = DEFAULT_TABLE_BITS);
+    ~TrigonometryLUT();
 
     float operator[](unsigned int i);
+
+    float sin(unsigned int i);
+    float cos(unsigned int i);
+    float tan(unsigned int i);
 };
 
-class NCO final {
+class NCO {
 public:
-    NCO(const float freq, const float sampleRate, struct SineLUT* table);
-    ~NCO();
+    NCO(const float freq, const float sampleRate, struct TrigonometryLUT* table);
+    virtual ~NCO();
 
-    float operator()(void);
+    virtual float operator()(void) final;
 
     float frequency() const;
     void setFrequency(const float frequency);
@@ -51,8 +55,8 @@ public:
     float sampleRate() const;
     void setSampleRate(const float sampleRate);
 
-private:
-    struct SineLUT* mTable;
+protected:
+    struct TrigonometryLUT* mTable;
 
     unsigned int mPhase;
     unsigned int mDeltaPhase;
@@ -60,7 +64,31 @@ private:
     float mFrequency;
     float mSampleRate;
 
-    void updatePhaseDelta();
+    virtual float lookUpTable(unsigned int index);
+
+private:
+    void resetPhaseDelta();
+    unsigned int updatePhase() const;
+};
+
+
+class SineOscillator : public NCO {
+public:
+    SineOscillator(const float freq, const float sampleRate, struct TrigonometryLUT* table);
+    virtual ~SineOscillator() = default;
+
+protected:
+    virtual float lookUpTable(unsigned int index);
+};
+
+
+class CosineOscillator : public NCO {
+public:
+    CosineOscillator(const float freq, const float sampleRate, struct TrigonometryLUT* table);
+    virtual ~CosineOscillator() = default;
+
+protected:
+    virtual float lookUpTable(unsigned int index);
 };
 
 #endif // _MODEM_INCLUDE_OSCILLATOR_HPP_
