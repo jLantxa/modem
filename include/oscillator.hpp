@@ -17,15 +17,30 @@
  *
 */
 
-#ifndef _MODEM_INCLUDE_NCO_HPP_
-#define _MODEM_INCLUDE_NCO_HPP_
+#ifndef _MODEM_INCLUDE_OSCILLATOR_HPP_
+#define _MODEM_INCLUDE_OSCILLATOR_HPP_
 
 #include <cmath>
 
+struct SineLUT {
+    unsigned int bit_depth;
+    unsigned int length;
+    unsigned int mask;
+    float* table;
+
+    const static unsigned int DEFAULT_TABLE_BITS = 10;
+    const static unsigned int MAX_TABLE_BITS = 16;
+    constexpr static float ROTATION = 2.0f * (1u << (8*sizeof(unsigned int) -1));
+
+    SineLUT(unsigned int bits = DEFAULT_TABLE_BITS);
+    ~SineLUT();
+
+    float operator[](unsigned int i);
+};
+
 class NCO final {
 public:
-    NCO(const float freq, const float sampleRate,
-        const unsigned int tableBits = DEFAULT_TABLE_BITS);
+    NCO(const float freq, const float sampleRate, struct SineLUT* table);
     ~NCO();
 
     float operator()(void);
@@ -36,15 +51,9 @@ public:
     float sampleRate() const;
     void setSampleRate(const float sampleRate);
 
-    const static unsigned int DEFAULT_TABLE_BITS = 10;
-    const static unsigned int MAX_TABLE_BITS = 16;
-
 private:
-    float* mTable;
+    struct SineLUT* mTable;
 
-    unsigned int mTableBits;
-    unsigned int mTableLength;
-    unsigned int mMask;
     unsigned int mPhase;
     unsigned int mDeltaPhase;
 
@@ -52,8 +61,6 @@ private:
     float mSampleRate;
 
     void updatePhaseDelta();
-
-    const float ROTATION = pow(2, 8*sizeof(unsigned int));
 };
 
-#endif // _MODEM_INCLUDE_NCO_HPP_
+#endif // _MODEM_INCLUDE_OSCILLATOR_HPP_

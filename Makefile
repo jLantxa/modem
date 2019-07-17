@@ -30,7 +30,7 @@ CircularBufferTest:
 
 AlsaAudioSinkTest:
 	$(CC) $(CFLAGS) $(ALSA_LFLAGS) -DDEBUG_LEVEL=6 -I $(INCLUDE)/ \
-		$(SRC)/NCO.cpp \
+		$(SRC)/oscillator.cpp \
 		$(SRC)/AlsaAudioSink.cpp \
 		$(TEST)/AlsaAudioSinkTest.cpp \
 	-o $(OUT)/AlsaAudioSinkTest

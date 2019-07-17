@@ -22,7 +22,7 @@
 #include "debug.hpp"
 
 #include "AlsaAudioSink.hpp"
-#include "NCO.hpp"
+#include "oscillator.hpp"
 
 #include <algorithm>
 
@@ -42,7 +42,8 @@ int main(int argc, char const *argv[])
 
     IAudioSink* audioSink = new AlsaAudioSink(sample_rate);
 
-    NCO oscillator(freq, sample_rate, 16/*bits for table index*/);
+    SineLUT sineTable;
+    NCO oscillator(freq, sample_rate, &sineTable);
 
     const unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
     const unsigned int frame_size = static_cast<unsigned int>(total_samples/(float)notes);

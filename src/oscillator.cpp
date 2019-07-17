@@ -17,42 +17,53 @@
  *
 */
 
-#include "NCO.hpp"
+#include "oscillator.hpp"
 
 #include <algorithm>
 #include <cmath>
 
-NCO::NCO(const float freq, const float sampleRate, const unsigned int tableBits)
-:   mFrequency(freq),
+SineLUT::SineLUT(unsigned int bits) {
+    bit_depth = std::min<unsigned int>(MAX_TABLE_BITS, bit_depth);
+    length = 1 << bit_depth;
+    mask = length - 1;
+
+    table = new float[length];
+    for (unsigned int k = 0; k < length; k++) {
+        table[k] = sin(2*M_PI * k/(double)length);
+    }
+}
+
+SineLUT::~SineLUT() {
+    delete[] table;
+}
+
+float SineLUT::operator[](unsigned int i) {
+    return table[i & mask];
+}
+
+
+NCO::NCO(const float freq, const float sampleRate, struct SineLUT* table)
+:   mTable(table),
+    mFrequency(freq),
     mSampleRate(sampleRate),
     mPhase(0),
     mDeltaPhase(0)
 {
-    mTableBits = std::min<unsigned int>(MAX_TABLE_BITS, tableBits);
-    mTableLength = 1 << mTableBits;
-    mMask = mTableLength - 1;
-
     updatePhaseDelta();
-
-    // Fill lookup table
-    mTable = new float[mTableLength];
-    for (unsigned int k = 0; k < mTableLength; k++) {
-        mTable[k] =  sin(2 * M_PI * k / (double)mTableLength);
-    }
 }
 
 NCO::~NCO() {
-    delete[] mTable;
+
 }
 
 void NCO::updatePhaseDelta() {
-    mDeltaPhase = (unsigned int)(mFrequency * ROTATION / mSampleRate);
+    mDeltaPhase = (unsigned int)(mFrequency * SineLUT::ROTATION / mSampleRate);
 }
 
 float NCO::operator()(void) {
     mPhase += mDeltaPhase;
-    const unsigned int index = mPhase >> (sizeof(unsigned)*8 - mTableBits);
-	return mTable[index & mMask];
+    const unsigned int index = mPhase >> (sizeof(unsigned)*8 - mTable->bit_depth);
+    return (*mTable)[index];
 }
 
 float NCO::frequency() const {
