@@ -31,4 +31,10 @@ using AudioRingBuffer = CircularBuffer<Sample>;
 using ComplexSymbol = std::complex<Sample>;
 const ComplexSymbol j(0, 1);
 
+// Digital constelations
+const ComplexSymbol BPSK_CONSTELATION[] = {
+    ComplexSymbol(-1),
+    ComplexSymbol(1)
+};
+
 #endif // _MODEM_INCLUDE_SIGNAL_HPP_
