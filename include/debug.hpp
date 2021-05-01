@@ -1,6 +1,5 @@
 /*
- * This source file is part of Modem
- * Copyright (C) 2019  Javier Lancha Vázquez
+ * Copyright (C) 2019, 2021  Javier Lancha Vázquez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,94 +12,62 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _MODEM_INCLUDE_DEBUG_HPP_
-#define _MODEM_INCLUDE_DEBUG_HPP_
+#ifndef _JLTX_INCLUDE_DEBUG_HPP_
+#define _JLTX_INCLUDE_DEBUG_HPP_
 
 #include <cstdio>
 
-namespace Debug
-{
-    enum DebugLevel : int {
-        NONE    = -1,
-        INFO    = 0,
-        WARNING = 1,
-        ERROR   = 2,
-        DEBUG   = 3,
-        VERBOSE = 4,
-    };
+namespace jltx {
+namespace debug {
 
-    static const char* level_tags[] {
-        [DebugLevel::INFO]      = "I",
-        [DebugLevel::WARNING]   = "W",
-        [DebugLevel::ERROR]     = "E",
-        [DebugLevel::DEBUG]     = "D",
-        [DebugLevel::VERBOSE]   = "V"
-    };
-
-    const static int DEFAULT_LEVEL = INFO;
-
-#if defined(NDEBUG) && NDEBUG !=0
-    static int defined_level = NONE;
+#ifdef DEBUG_LEVEL
+    static constexpr int defined_level = DEBUG_LEVEL;
 #else
-    #ifdef DEBUG_LEVEL
-        static int defined_level = DEBUG_LEVEL;
-    #else
-        static int defined_level = DEFAULT_LEVEL;
-    #endif
-
+    static constexpr int defined_level = 0;
 #endif
 
-    template <typename... Args>
-    static void log(const int level, const char* tag, const char* str) {
-        if (level <= defined_level) {
-            printf("[%s] %s: ", level_tags[level], tag);
-            printf("%s", str);
-            printf("\n");
-        }
-    }
-
-    template <typename... Args>
-    static void log(const int level, const char* tag, const char* fmt, Args... args) {
-        if (level <= defined_level) {
-            printf("[%s] %s: ", level_tags[level], tag);
-            printf(fmt, args...);
-            printf("\n");
-        }
-    }
-
-    // Visible debug functions
-    class Log {
-    public:
-        template <typename... Args>
-        static void i(const char* tag, Args... args) {
-            log(INFO, tag, args...);
-        }
-
-        template <typename... Args>
-        static void w(const char* tag, Args... args) {
-            log(WARNING, tag, args...);
-        }
-
-        template <typename... Args>
-        static void e(const char* tag, Args... args) {
-            log(ERROR, tag, args...);
-        }
-
-        template <typename... Args>
-        static void d(const char* tag, Args... args) {
-            log(DEBUG, tag, args...);
-        }
-
-        template <typename... Arg>
-        static void v(const char* tag, Arg... args) {
-            log(VERBOSE, tag, args...);
-        }
-
-    };
+template <typename... Args>
+static void log(FILE* file, const char* tag, const char* levelTag, const char* fmt, Args... args) {
+    fprintf(file, "[%s] %s: ", levelTag, tag);
+    fprintf(file, fmt, args...);
+    fprintf(file, "\n");
 }
 
-#endif // _MODEM_INCLUDE_DEBUG_HPP_
+template <typename... Args>
+static void log(FILE* file, const char* tag, const char* levelTag, const char* str) {
+    log(file, tag, levelTag, "%s", str);
+}
+
+/** \brief Custom logger to configurable output file */
+class Logger final {
+private:
+    FILE* file;
+
+public:
+    explicit Logger(FILE* log_file) : file(log_file) { }
+
+#define LOG_FUNCTION(name, level, level_tag) \
+    template <typename... Args> \
+    inline void name(const char* tag, Args... args) const { \
+        if constexpr (defined_level >= level) { \
+            log(file, tag, level_tag, args...); \
+        } \
+    }
+
+    LOG_FUNCTION(e, -2, "ERROR");
+    LOG_FUNCTION(w, -1, "WARNING");
+    LOG_FUNCTION(i,  0, "INFO");
+    LOG_FUNCTION(d,  1, "DEBUG");
+    LOG_FUNCTION(v,  2, "VERBOSE");
+};
+
+/** Standard Logger to stdout */
+const Logger Log(stdout);
+
+}   // namespace debug
+}   // namespace jltx
+
+#endif  // _JLTX_INCLUDE_DEBUG_HPP_

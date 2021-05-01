@@ -1,6 +1,6 @@
 /*
  * This source file is part of Modem
- * Copyright (C) 2019  Javier Lancha Vázquez
+ * Copyright (C) 2019, 2021  Javier Lancha Vázquez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,4 +39,4 @@ private:
     unsigned int mSampleRate;
 };
 
-#endif // _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_
+#endif  // _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_

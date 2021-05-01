@@ -1,6 +1,6 @@
 /*
  * This source file is part of Modem
- * Copyright (C) 2019  Javier Lancha Vázquez
+ * Copyright (C) 2019, 2021  Javier Lancha Vázquez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ public:
     NCO(const float freq, const float sampleRate, struct TrigonometryLUT* table);
     virtual ~NCO();
 
-    virtual float operator()(void) final;
+    float operator()();
 
     float frequency() const;
     void setFrequency(const float frequency);
@@ -78,7 +78,7 @@ public:
     virtual ~SineOscillator() = default;
 
 protected:
-    virtual float lookUpTable(unsigned int index);
+    float lookUpTable(unsigned int index) override;
 };
 
 
@@ -88,7 +88,7 @@ public:
     virtual ~CosineOscillator() = default;
 
 protected:
-    virtual float lookUpTable(unsigned int index);
+    float lookUpTable(unsigned int index) override;
 };
 
-#endif // _MODEM_INCLUDE_OSCILLATOR_HPP_
+#endif  // _MODEM_INCLUDE_OSCILLATOR_HPP_

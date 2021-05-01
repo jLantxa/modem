@@ -1,6 +1,6 @@
 /*
  * This source file is part of Modem
- * Copyright (C) 2019  Javier Lancha Vázquez
+ * Copyright (C) 2019, 2021  Javier Lancha Vázquez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
 */
+
+#include <cmath>
 #include <cstdio>
 
-#include "oscillator.hpp"
-
 #include <algorithm>
-#include <cmath>
+
+#include "oscillator.hpp"
 
 TrigonometryLUT::TrigonometryLUT(unsigned int bits) {
     bit_depth = std::min<unsigned int>(MAX_TABLE_BITS, bit_depth);
@@ -61,10 +62,11 @@ float TrigonometryLUT::tan(unsigned int i) {
 
 NCO::NCO(const float freq, const float sampleRate, struct TrigonometryLUT* table)
 :   mTable(table),
-    mFrequency(freq),
-    mSampleRate(sampleRate),
     mPhase(0),
-    mDeltaPhase(0)
+    mDeltaPhase(0),
+    mFrequency(freq),
+    mSampleRate(sampleRate)
+
 {
     resetPhaseDelta();
 }

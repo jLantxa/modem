@@ -1,6 +1,6 @@
 /*
  * This source file is part of Modem
- * Copyright (C) 2019  Javier Lancha Vázquez
+ * Copyright (C) 2019, 2021  Javier Lancha Vázquez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ AlsaAudioSink::AlsaAudioSink(unsigned int sampleRate)
 
     unsigned int ret;
     if ((ret = snd_pcm_open(&mPCMHandle, PCM_DEVICE, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
-		Debug::Log::e(LOG_TAG, "Cannot open \"%s\" PCM device. %s",
+		jltx::debug::Log.e(LOG_TAG, "Cannot open \"%s\" PCM device. %s",
 			PCM_DEVICE, snd_strerror(ret));
     }
 
@@ -40,31 +40,31 @@ AlsaAudioSink::AlsaAudioSink(unsigned int sampleRate)
 	snd_pcm_hw_params_any(mPCMHandle, HWParams);
 
 	if ((ret = snd_pcm_hw_params_set_access(mPCMHandle, HWParams, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
-		Debug::Log::e(LOG_TAG, "Cannot set interleaved mode. %s", snd_strerror(ret));
+		jltx::debug::Log.e(LOG_TAG, "Cannot set interleaved mode. %s", snd_strerror(ret));
     }
 
 	if ((ret = snd_pcm_hw_params_set_format(mPCMHandle, HWParams, SND_PCM_FORMAT_FLOAT)) < 0) {
-		Debug::Log::e(LOG_TAG, "Cannot set format. %s", snd_strerror(ret));
+		jltx::debug::Log.e(LOG_TAG, "Cannot set format. %s", snd_strerror(ret));
     }
 
 	if ((ret = snd_pcm_hw_params_set_channels(mPCMHandle, HWParams, CHANNELS)) < 0) {
-		Debug::Log::e(LOG_TAG, "Cannot set channels number. %s", snd_strerror(ret));
+		jltx::debug::Log.e(LOG_TAG, "Cannot set channels number. %s", snd_strerror(ret));
     }
 
 	if ((ret = snd_pcm_hw_params_set_rate_near(mPCMHandle, HWParams, &sampleRate, 0)) < 0) {
-		Debug::Log::e(LOG_TAG, "Cannot set rate. %s", snd_strerror(ret));
+		jltx::debug::Log.e(LOG_TAG, "Cannot set rate. %s", snd_strerror(ret));
     }
 
 	if ((ret = snd_pcm_hw_params(mPCMHandle, HWParams)) < 0) {
-		Debug::Log::e(LOG_TAG, "Cannot set harware parameters. %s", snd_strerror(ret));
+		jltx::debug::Log.e(LOG_TAG, "Cannot set harware parameters. %s", snd_strerror(ret));
     }
 
-	Debug::Log::i(LOG_TAG, "PCM name: '%s'", snd_pcm_name(mPCMHandle));
-	Debug::Log::i(LOG_TAG, "PCM state: %s", snd_pcm_state_name(snd_pcm_state(mPCMHandle)));
+	jltx::debug::Log.i(LOG_TAG, "PCM name: '%s'", snd_pcm_name(mPCMHandle));
+	jltx::debug::Log.i(LOG_TAG, "PCM state: %s", snd_pcm_state_name(snd_pcm_state(mPCMHandle)));
     unsigned int reportedSampleRate;
 	snd_pcm_hw_params_get_rate(HWParams, &reportedSampleRate, 0);
     mSampleRate = reportedSampleRate;
-	Debug::Log::i(LOG_TAG, "rate: %d Hz", mSampleRate);
+	jltx::debug::Log.i(LOG_TAG, "rate: %d Hz", mSampleRate);
 
 	snd_pcm_hw_params_free(HWParams);
 	snd_pcm_prepare(mPCMHandle);

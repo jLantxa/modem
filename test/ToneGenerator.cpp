@@ -1,6 +1,6 @@
 /*
  * This source file is part of Modem
- * Copyright (C) 2019  Javier Lancha Vázquez
+ * Copyright (C) 2019, 2021  Javier Lancha Vázquez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,26 +19,25 @@
 
 #define NDEBUG 0
 
+#include <algorithm>
+
 #include "debug.hpp"
 
 #include "AlsaAudioSink.hpp"
 #include "oscillator.hpp"
 
-#include <algorithm>
-
 const static char* LOG_TAG = "AlsaAudioSinkTest";
 
 int main(int argc, char const *argv[])
 {
-    if (argc != 5) {
-        Debug::Log::e(LOG_TAG, "./AlsaAudioSinkTest <freq0> sample_rate> <time> <notes>");
+    if (argc != 4) {
+        jltx::debug::Log.e(LOG_TAG, "%s <sample_rate> <freq> <time>", argv[0]);
         return -1;
     }
 
-    unsigned int freq = atoi(argv[1]);
-    const unsigned int sample_rate = atoi(argv[2]);
+    const unsigned int sample_rate = atoi(argv[1]);
+    const unsigned int freq = atoi(argv[2]);
     const float time = atof(argv[3]);
-    const unsigned int notes = std::max(1, atoi(argv[4]));
 
     IAudioSink* audioSink = new AlsaAudioSink(sample_rate);
 
@@ -46,20 +45,14 @@ int main(int argc, char const *argv[])
     SineOscillator oscillator(freq, sample_rate, &trigTable);
 
     const unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
-    const unsigned int frame_size = static_cast<unsigned int>(total_samples/(float)notes);
-    unsigned int n = 0;
-    float buffer[frame_size];
-    while (n < total_samples) {
-        for (unsigned int i = 0; i < frame_size; i++) {
-            buffer[i] = oscillator();
-        }
-        audioSink->send(buffer, frame_size);
-        freq = std::min<float>(freq*pow(2, 1/12.0f), sample_rate/2.0f);
-        oscillator.setFrequency(freq);
-        n += frame_size;
+    float buffer[total_samples];
+
+    for (unsigned int i = 0; i < total_samples; i++) {
+        buffer[i] = oscillator();
     }
 
-    Debug::Log::i(LOG_TAG, "TEST END");
+    audioSink->send(buffer, total_samples);
+
     delete audioSink;
     return 0;
 }

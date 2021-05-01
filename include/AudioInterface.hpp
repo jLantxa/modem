@@ -1,6 +1,6 @@
 /*
  * This source file is part of Modem
- * Copyright (C) 2019  Javier Lancha Vázquez
+ * Copyright (C) 2019, 2021  Javier Lancha Vázquez
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,10 @@
 #ifndef _MODEM_INCLUDE_AUDIO_INTERFACE_HPP_
 #define _MODEM_INCLUDE_AUDIO_INTERFACE_HPP_
 
-#include "CircularBuffer.hpp"
-
 class IAudioSink {
 public:
     virtual ~IAudioSink() = default;
     virtual unsigned int send(float* buffer, unsigned int size) = 0;
 };
 
-#endif // _MODEM_INCLUDE_AUDIO_INTERFACE_HPP_
+#endif  // _MODEM_INCLUDE_AUDIO_INTERFACE_HPP_
