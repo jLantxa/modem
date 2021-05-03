@@ -24,18 +24,16 @@
 
 #include "oscillator.hpp"
 
+namespace modem {
+
 TrigonometryLUT::TrigonometryLUT(unsigned int bits) {
-    bit_depth = std::min<unsigned int>(MAX_TABLE_BITS, bit_depth);
+    bit_depth = std::min<unsigned int>(MAX_TABLE_BITS, bits);
     length = 1 << bit_depth;
     mask = length - 1;
 
     table = new float[length];
     for (unsigned int k = 0; k < length; k++) {
-        /* Careful here:
-         * This struct defines a method called sin. Must use std::sin to avoid
-         * conflicts.
-         */
-        table[k] = std::sin(2*M_PI * k/(double)length);
+        table[k] = std::sin((2 * M_PI) * k / static_cast<float>(length));
     }
 }
 
@@ -121,3 +119,5 @@ CosineOscillator::CosineOscillator(const float freq, const float sampleRate, str
 float CosineOscillator::lookUpTable(unsigned int i) {
     return mTable->cos(i);
 }
+
+}  // namespace modem

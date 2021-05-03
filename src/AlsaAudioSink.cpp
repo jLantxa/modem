@@ -26,6 +26,8 @@
 
 const static char* LOG_TAG = "AlsaAudioSink";
 
+namespace modem {
+
 AlsaAudioSink::AlsaAudioSink(unsigned int sampleRate)
 {
 	snd_pcm_hw_params_t* HWParams;
@@ -94,3 +96,5 @@ unsigned int AlsaAudioSink::send(float* buffer, unsigned int size) {
 unsigned int AlsaAudioSink::sampleRate() {
 	return mSampleRate;
 }
+
+}  // namespace modem

@@ -20,10 +20,14 @@
 #ifndef _MODEM_INCLUDE_AUDIO_INTERFACE_HPP_
 #define _MODEM_INCLUDE_AUDIO_INTERFACE_HPP_
 
+namespace modem {
+
 class IAudioSink {
 public:
     virtual ~IAudioSink() = default;
     virtual unsigned int send(float* buffer, unsigned int size) = 0;
 };
+
+}  // namespace modem
 
 #endif  // _MODEM_INCLUDE_AUDIO_INTERFACE_HPP_

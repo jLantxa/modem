@@ -24,6 +24,8 @@
 
 #include "AudioInterface.hpp"
 
+namespace modem {
+
 class AlsaAudioSink : public IAudioSink {
 public:
     AlsaAudioSink(unsigned int sampleRate);
@@ -38,5 +40,7 @@ private:
 
     unsigned int mSampleRate;
 };
+
+}  // namespace modem
 
 #endif  // _MODEM_INCLUDE_ALSA_AUDIO_SINK_HPP_

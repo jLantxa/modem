@@ -39,10 +39,10 @@ int main(int argc, char const *argv[])
     const unsigned int freq = atoi(argv[2]);
     const float time = atof(argv[3]);
 
-    IAudioSink* audioSink = new AlsaAudioSink(sample_rate);
+    modem::IAudioSink* audioSink = new modem::AlsaAudioSink(sample_rate);
 
-    TrigonometryLUT trigTable;
-    SineOscillator oscillator(freq, sample_rate, &trigTable);
+    modem::TrigonometryLUT trigTable;
+    modem::SineOscillator oscillator(freq, sample_rate, &trigTable);
 
     const unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
     float buffer[total_samples];

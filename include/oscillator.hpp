@@ -22,6 +22,8 @@
 
 #include <cmath>
 
+namespace modem {
+
 struct TrigonometryLUT {
     unsigned int bit_depth;
     unsigned int length;
@@ -90,5 +92,7 @@ public:
 protected:
     float lookUpTable(unsigned int index) override;
 };
+
+}  // namespace modem
 
 #endif  // _MODEM_INCLUDE_OSCILLATOR_HPP_
