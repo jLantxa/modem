@@ -30,9 +30,9 @@ struct TrigonometryLUT {
     unsigned int mask;
     float* table;
 
-    const static unsigned int DEFAULT_TABLE_BITS = 10;
-    const static unsigned int MAX_TABLE_BITS = 16;
-    constexpr static float ROTATION = 2.0f * (1u << (8*sizeof(unsigned int) -1));
+    static constexpr unsigned int DEFAULT_TABLE_BITS = 10;
+    static constexpr unsigned int MAX_TABLE_BITS = 16;
+    static constexpr float ROTATION = 2.0f * (1u << (8*sizeof(unsigned int) -1));
 
     TrigonometryLUT(unsigned int bits = DEFAULT_TABLE_BITS);
     ~TrigonometryLUT();
