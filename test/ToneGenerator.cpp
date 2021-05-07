@@ -44,14 +44,18 @@ int main(int argc, char const *argv[])
     modem::TrigonometryLUT trigTable;
     modem::SineOscillator oscillator(freq, sample_rate, &trigTable);
 
-    const unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
-    float buffer[total_samples];
+    constexpr unsigned int buffer_size = 256;
+    unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
+    float buffer[buffer_size];
 
-    for (unsigned int i = 0; i < total_samples; i++) {
-        buffer[i] = oscillator();
+    while (total_samples > 0) {
+        unsigned int num_samples = std::min(buffer_size, total_samples);
+        for (unsigned int i = 0; i < num_samples; i++) {
+            buffer[i] = oscillator();
+        }
+        audioSink->send(buffer, num_samples);
+        total_samples -= num_samples;
     }
-
-    audioSink->send(buffer, total_samples);
 
     delete audioSink;
     return 0;
