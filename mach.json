@@ -1,6 +1,6 @@
 [
     {
-        "target" : "ToneGenerator",
+        "target" : "modem",
         "type" : "cc_binary",
         "include" : ["include"],
 
@@ -13,9 +13,10 @@
         ],
 
         "srcs" : [
-            "test/ToneGenerator.cpp",
+            "src/modem.cpp",
             "src/AlsaAudioSink.cpp",
-            "src/oscillator.cpp"
+            "src/oscillator.cpp",
+            "src/fsk.cpp"
         ]
     }
 ]

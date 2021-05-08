@@ -24,37 +24,41 @@
 #include "debug.hpp"
 
 #include "AlsaAudioSink.hpp"
-#include "oscillator.hpp"
+#include "fsk.hpp"
 
-const static char* LOG_TAG = "AlsaAudioSinkTest";
+const static char* LOG_TAG = "modem";
 
 int main(int argc, char const *argv[])
 {
-    if (argc != 4) {
-        jltx::debug::Log.e(LOG_TAG, "%s <sample_rate> <freq> <time>", argv[0]);
+    if (argc != 6) {
+        jltx::debug::Log.e(LOG_TAG, "%s <sample_rate> <baud_rate> <f0> <f1> <text>", argv[0]);
         return -1;
     }
 
-    const unsigned int sample_rate = atoi(argv[1]);
-    const unsigned int freq = atoi(argv[2]);
-    const float time = atof(argv[3]);
+    const uint32_t sample_rate = atoi(argv[1]);
+    const uint16_t baud_rate = atoi(argv[2]);
+    const uint16_t f0 = atoi(argv[3]);
+    const uint16_t f1 = atoi(argv[4]);
+    const char* text = argv[5];
 
     modem::IAudioSink* audioSink = new modem::AlsaAudioSink(sample_rate);
 
-    modem::TrigonometryLUT trigTable;
-    modem::SineOscillator oscillator(freq, sample_rate, trigTable);
+    modem::FSKConfig fsk_config {
+        .sample_rate = sample_rate,
+        .baud_rate = baud_rate,
+        .f0 = f0,
+        .f1 = f1
+    };
 
-    constexpr unsigned int buffer_size = 256;
-    unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
-    float buffer[buffer_size];
+    modem::FSKMod fsk_mod(fsk_config);
 
-    while (total_samples > 0) {
-        unsigned int num_samples = std::min(buffer_size, total_samples);
-        for (unsigned int i = 0; i < num_samples; i++) {
-            buffer[i] = oscillator();
-        }
-        audioSink->send(buffer, num_samples);
-        total_samples -= num_samples;
+    const unsigned int text_size = strlen(text);
+    const uint16_t symbol_length = fsk_mod.GetSymbolLength();
+    float buffer[symbol_length];
+
+    for (unsigned int i = 0; i < text_size; i++) {
+        fsk_mod.EncodeSymbol((uint8_t) text[i], buffer);
+        audioSink->send(buffer, symbol_length);
     }
 
     delete audioSink;
