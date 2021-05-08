@@ -37,16 +37,16 @@ struct TrigonometryLUT {
     TrigonometryLUT(unsigned int bits = DEFAULT_TABLE_BITS);
     ~TrigonometryLUT();
 
-    float operator[](unsigned int i);
+    float operator[](unsigned int i) const ;
 
-    float sin(unsigned int i);
-    float cos(unsigned int i);
-    float tan(unsigned int i);
+    float sin(unsigned int i) const;
+    float cos(unsigned int i) const;
+    float tan(unsigned int i) const;
 };
 
 class NCO {
 public:
-    NCO(const float freq, const float sampleRate, struct TrigonometryLUT* table);
+    NCO(const float freq, const float sampleRate, const TrigonometryLUT& table);
     virtual ~NCO();
 
     float operator()();
@@ -58,7 +58,7 @@ public:
     void setSampleRate(const float sampleRate);
 
 protected:
-    struct TrigonometryLUT* mTable;
+    const TrigonometryLUT& mTable;
 
     unsigned int mPhase;
     unsigned int mDeltaPhase;
@@ -66,7 +66,7 @@ protected:
     float mFrequency;
     float mSampleRate;
 
-    virtual float lookUpTable(unsigned int index);
+    virtual float lookUpTable(unsigned int index) const;
 
 private:
     void resetPhaseDelta();
@@ -76,21 +76,21 @@ private:
 
 class SineOscillator : public NCO {
 public:
-    SineOscillator(const float freq, const float sampleRate, struct TrigonometryLUT* table);
+    SineOscillator(const float freq, const float sampleRate, const TrigonometryLUT& table);
     virtual ~SineOscillator() = default;
 
 protected:
-    float lookUpTable(unsigned int index) override;
+    float lookUpTable(unsigned int index) const override;
 };
 
 
 class CosineOscillator : public NCO {
 public:
-    CosineOscillator(const float freq, const float sampleRate, struct TrigonometryLUT* table);
+    CosineOscillator(const float freq, const float sampleRate, const TrigonometryLUT& table);
     virtual ~CosineOscillator() = default;
 
 protected:
-    float lookUpTable(unsigned int index) override;
+    float lookUpTable(unsigned int index) const override;
 };
 
 }  // namespace modem

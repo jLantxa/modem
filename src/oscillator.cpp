@@ -42,23 +42,23 @@ TrigonometryLUT::~TrigonometryLUT() {
 }
 
 
-float TrigonometryLUT::operator[](unsigned int i) {
+float TrigonometryLUT::operator[](unsigned int i) const {
     return table[i & mask];
 }
 
-float TrigonometryLUT::sin(unsigned int i) {
+float TrigonometryLUT::sin(unsigned int i) const {
     return table[i & mask];
 }
 
-float TrigonometryLUT::cos(unsigned int i) {
+float TrigonometryLUT::cos(unsigned int i) const {
     return table[(i+(length>>2)) & mask];
 }
 
-float TrigonometryLUT::tan(unsigned int i) {
+float TrigonometryLUT::tan(unsigned int i) const{
     return table[i & mask] / table[(i+(length>>2)) & mask];
 }
 
-NCO::NCO(const float freq, const float sampleRate, struct TrigonometryLUT* table)
+NCO::NCO(const float freq, const float sampleRate, const TrigonometryLUT& table)
 :   mTable(table),
     mPhase(0),
     mDeltaPhase(0),
@@ -79,12 +79,12 @@ void NCO::resetPhaseDelta() {
 
 float NCO::operator()(void) {
     mPhase += mDeltaPhase;
-    const unsigned int index = mPhase >> (sizeof(unsigned)*8 - mTable->bit_depth);
+    const unsigned int index = mPhase >> (sizeof(unsigned)*8 - mTable.bit_depth);
     return lookUpTable(index);
 }
 
-float NCO::lookUpTable(unsigned int i) {
-    return (*mTable)[i];
+float NCO::lookUpTable(unsigned int i) const {
+    return mTable[i];
 }
 
 float NCO::frequency() const {
@@ -106,18 +106,18 @@ void NCO::setSampleRate(const float sampleRate) {
 }
 
 
-SineOscillator::SineOscillator(const float freq, const float sampleRate, struct TrigonometryLUT* table)
+SineOscillator::SineOscillator(const float freq, const float sampleRate, const TrigonometryLUT& table)
 : NCO(freq, sampleRate, table) { }
 
-float SineOscillator::lookUpTable(unsigned int i) {
-    return mTable->sin(i);
+float SineOscillator::lookUpTable(unsigned int i) const {
+    return mTable.sin(i);
 }
 
-CosineOscillator::CosineOscillator(const float freq, const float sampleRate, struct TrigonometryLUT* table)
+CosineOscillator::CosineOscillator(const float freq, const float sampleRate, const TrigonometryLUT& table)
 : NCO(freq, sampleRate, table) { }
 
-float CosineOscillator::lookUpTable(unsigned int i) {
-    return mTable->cos(i);
+float CosineOscillator::lookUpTable(unsigned int i) const {
+    return mTable.cos(i);
 }
 
 }  // namespace modem

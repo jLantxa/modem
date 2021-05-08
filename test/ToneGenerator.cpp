@@ -42,7 +42,7 @@ int main(int argc, char const *argv[])
     modem::IAudioSink* audioSink = new modem::AlsaAudioSink(sample_rate);
 
     modem::TrigonometryLUT trigTable;
-    modem::SineOscillator oscillator(freq, sample_rate, &trigTable);
+    modem::SineOscillator oscillator(freq, sample_rate, trigTable);
 
     constexpr unsigned int buffer_size = 256;
     unsigned int total_samples = static_cast<unsigned int>(sample_rate * time);
