@@ -29,6 +29,7 @@ namespace modem {
 
 FSKMod::FSKMod(FSKConfig config)
 :   m_config(config),
+    m_trig_table(16),
     m_oscillator(m_config.f0, m_config.sample_rate, m_trig_table)
 {
     const float samples_per_bit = static_cast<float>(m_config.sample_rate) / m_config.baud_rate;

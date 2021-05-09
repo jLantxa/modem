@@ -45,7 +45,7 @@ public:
 private:
     const FSKConfig m_config;
     modem::TrigonometryLUT m_trig_table;
-    modem::CosineOscillator m_oscillator;
+    modem::SineOscillator m_oscillator;
 
     unsigned int m_symbol_length;
 };

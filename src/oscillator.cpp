@@ -78,9 +78,10 @@ void NCO::resetPhaseDelta() {
 }
 
 float NCO::operator()(void) {
-    mPhase += mDeltaPhase;
     const unsigned int index = mPhase >> (sizeof(unsigned)*8 - mTable.bit_depth);
-    return lookUpTable(index);
+    float value = lookUpTable(index);
+    mPhase += mDeltaPhase;
+    return value;
 }
 
 float NCO::lookUpTable(unsigned int i) const {
