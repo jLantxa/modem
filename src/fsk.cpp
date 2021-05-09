@@ -32,8 +32,8 @@ FSKMod::FSKMod(FSKConfig config)
     m_trig_table(16),
     m_oscillator(m_config.f0, m_config.sample_rate, m_trig_table)
 {
-    const float samples_per_bit = static_cast<float>(m_config.sample_rate) / m_config.baud_rate;
-    m_symbol_length = static_cast<unsigned int>(std::ceil(8 * samples_per_bit));
+    const unsigned int samples_per_bit = std::ceil(static_cast<float>(m_config.sample_rate) / m_config.baud_rate);
+    m_symbol_length = 8 * samples_per_bit;
 }
 
 uint16_t FSKMod::GetSymbolLength() const {

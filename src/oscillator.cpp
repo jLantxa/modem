@@ -33,7 +33,7 @@ TrigonometryLUT::TrigonometryLUT(unsigned int bits) {
 
     table = new float[length];
     for (unsigned int k = 0; k < length; k++) {
-        table[k] = std::sin((2 * M_PI) * k / static_cast<float>(length));
+        table[k] = std::sin((2 * M_PI) * k / static_cast<float>(length+1));
     }
 }
 

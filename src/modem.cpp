@@ -56,8 +56,8 @@ int main(int argc, char const *argv[])
     const uint16_t symbol_length = fsk_mod.GetSymbolLength();
     float buffer[symbol_length];
 
-    for (unsigned int i = 0; i < text_size; i++) {
-        fsk_mod.EncodeSymbol((uint8_t) text[i], buffer);
+    for (unsigned int char_index = 0; char_index < text_size; char_index++) {
+        fsk_mod.EncodeSymbol((uint8_t) text[char_index], buffer);
         audioSink->send(buffer, symbol_length);
     }
 
