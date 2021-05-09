@@ -33,14 +33,13 @@ TrigonometryLUT::TrigonometryLUT(unsigned int bits) {
 
     table = new float[length];
     for (unsigned int k = 0; k < length; k++) {
-        table[k] = std::sin((2 * M_PI) * k / static_cast<float>(length+1));
+        table[k] = std::sin((2 * M_PI) * k / static_cast<float>(length));
     }
 }
 
 TrigonometryLUT::~TrigonometryLUT() {
     delete[] table;
 }
-
 
 float TrigonometryLUT::operator[](unsigned int i) const {
     return table[i & mask];
@@ -57,6 +56,7 @@ float TrigonometryLUT::cos(unsigned int i) const {
 float TrigonometryLUT::tan(unsigned int i) const{
     return table[i & mask] / table[(i+(length>>2)) & mask];
 }
+
 
 NCO::NCO(const float freq, const float sampleRate, const TrigonometryLUT& table)
 :   mTable(table),
@@ -113,6 +113,7 @@ SineOscillator::SineOscillator(const float freq, const float sampleRate, const T
 float SineOscillator::lookUpTable(unsigned int i) const {
     return mTable.sin(i);
 }
+
 
 CosineOscillator::CosineOscillator(const float freq, const float sampleRate, const TrigonometryLUT& table)
 : NCO(freq, sampleRate, table) { }
